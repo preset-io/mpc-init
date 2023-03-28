@@ -98,6 +98,7 @@
         "elasticache:AddTagsToResource",
         "elasticache:RemoveTagsFromResource",
         "elasticache:ModifyCacheParameterGroup",
+        "elasticache:ModifyReplicationGroup",
         "elasticache:ListTagsForResource"
       ],
       "Resource" : "*"
