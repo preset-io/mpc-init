@@ -295,6 +295,7 @@ Resources:
               "ec2:Update*",
               "ec2:GetLaunchTemplateData",
               "ec2:ModifyLaunchTemplate",
+              "ec2:TerminateInstances",
               "ec2:RunInstances"
           ],
             "Resource": "*"
