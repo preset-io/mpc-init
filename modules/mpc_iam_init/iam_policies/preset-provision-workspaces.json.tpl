@@ -130,6 +130,7 @@
         "ec2:GetLaunchTemplateData",
         "ec2:ModifyLaunchTemplate",
         "ec2:RunInstances",
+        "ec2:TerminateInstances",
         "elasticloadbalancing:Describe*"
       ],
       "Resource" : "*"
