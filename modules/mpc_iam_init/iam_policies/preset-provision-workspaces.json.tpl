@@ -192,6 +192,7 @@
         "autoscaling:DetachInstances",
         "autoscaling:SetDesiredCapacity",
         "autoscaling:UpdateAutoScalingGroup",
+        "autoscaling:SetInstanceProtection",
         "autoscaling:SuspendProcesses"
       ],
       "Resource" : "*"
@@ -207,6 +208,7 @@
         "iam:CreatePolicyVersion",
         "iam:CreateRole",
         "iam:CreateServiceLinkedRole",
+        "iam:DeletePolicyVersion",
         "iam:Get*",
         "iam:List*",
         "iam:PutRolePolicy",
