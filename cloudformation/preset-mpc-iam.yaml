@@ -269,6 +269,13 @@ Resources:
             ],
             "Resource": "*"
           }, {
+            "Sid": "ElasicLoadBalancing",
+            "Effect": "Allow",
+            "Action": [
+              "elasticloadbalancing:*"
+            ],
+            "Resource": "*"
+          }, {
             "Sid": "elasticacheDelete",
             "Effect": "Allow",
             "Action": ["elasticache:Delete*"],
