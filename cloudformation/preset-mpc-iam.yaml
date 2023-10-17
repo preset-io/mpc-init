@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
     This template creates IAM resources required to get MPC services up and running in your AWS account
 Parameters:
+  StsExternalId:
+    Type: String
+    Description: An external ID to use when building role assumption policies
+    NoEcho: true
   PresetEnv:
     Description: "Preset environment"
     Type: String
@@ -481,6 +485,9 @@ Resources:
               AWS:
               - !Join ['', ['arn:aws:iam::', !FindInMap [PresetAccounts, !Ref "PresetEnv", AccountId], ':root' ]]
               - !Join ['', ['arn:aws:iam::', !FindInMap [PresetAccounts, "DevOps", AccountId], ':root' ]]
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref StsExternalId
       Description: Preset Cluster Provisioner Role
       RoleName: preset-admin
 

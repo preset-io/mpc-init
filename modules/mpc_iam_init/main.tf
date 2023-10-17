@@ -14,6 +14,11 @@ resource "aws_iam_role" "preset_admin" {
             "arn:aws:iam::${var.preset_target_env_account_id}:root", "arn:aws:iam::${var.preset_devops_aws_account_id}:root"
           ]
         }
+        Condition = {
+          StringEquals = {
+            "sts:ExternalId" = var.preset_sts_external_id
+          }
+        }
       }
     ]
   })
