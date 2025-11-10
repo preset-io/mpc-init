@@ -56,7 +56,7 @@ Before using this module, ensure the following:
 
 ```hcl
 module "preset_mpc_permissions" {
-  source = "github.com/preset-io/mpc-init//gcp/terraform/modules/mpc-permissions?ref=1.0.0"
+  source = "github.com/preset-io/mpc-init//gcp/terraform/modules/mpc-permissions?ref=2.0.0"
 
   project_id              = "customer-project-id"
   preset_service_account  = "<PROVIDED BY Preset>"
@@ -67,7 +67,7 @@ module "preset_mpc_permissions" {
 
 ```hcl
 module "preset_mpc_permissions" {
-  source = "github.com/preset-io/mpc-init//gcp/terraform/modules/mpc-permissions?ref=1.0.0"
+  source = "github.com/preset-io/mpc-init//gcp/terraform/modules/mpc-permissions?ref=2.0.0"
 
   project_id              = "customer-project-id"
   preset_service_account  = "<PROVIDED BY Preset>"

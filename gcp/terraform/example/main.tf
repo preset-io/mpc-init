@@ -42,7 +42,7 @@ locals {
 }
 
 module "preset_mpc_permissions" {
-  source = "../modules/mpc-permissions"
+  source = "github.com/preset-io/mpc-init//gcp/terraform/modules/mpc-permissions?ref=2.0.0"
 
   project_id             = var.project_id
   preset_service_account = local.preset_service_account
