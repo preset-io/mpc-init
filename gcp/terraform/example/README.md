@@ -132,7 +132,6 @@ If you have an existing Deployment Manager deployment and want to migrate to Ter
 ## Support
 
 For issues or questions:
-1. Check the main README at `../../README_v2.md`
-2. Review the module documentation at `../modules/mpc-permissions/README.md`
-3. For migration issues, see `../MIGRATION.md`
-4. Contact your Preset support representative
+1. Review the module documentation at `../modules/mpc-permissions/README.md`
+2. For migration issues, see `../MIGRATION.md`
+3. Contact your Preset support representative
