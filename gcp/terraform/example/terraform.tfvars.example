@@ -2,6 +2,7 @@
 
 # Your GCP Project ID (REQUIRED)
 project_id = "your-project-id-here"
+preset_service_account = "service-account-provided-by-preset"
 
 # Optional: Manage organization policy for allowed IAM domains
 # This automatically adds Preset and Datadog to the allowedPolicyMemberDomains constraint

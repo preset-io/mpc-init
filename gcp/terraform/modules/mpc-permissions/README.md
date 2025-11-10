@@ -113,7 +113,7 @@ The custom role includes permissions for:
 
 ## Migration from Deployment Manager
 
-If you're migrating from the legacy Deployment Manager template, see the detailed migration guide: [MIGRATION.md](./MIGRATION.md)
+If you're migrating from the legacy Deployment Manager template, see the detailed migration guide: [MIGRATION.md](../../../../MIGRATION.md)
 
 This module uses **side-by-side migration** (no complex import commands needed!):
 - Creates NEW resources with different default names
