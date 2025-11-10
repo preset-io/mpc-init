@@ -1,0 +1,19 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Your GCP Project ID (REQUIRED)
+project_id = "your-project-id-here"
+
+# Optional: Manage organization policy for allowed IAM domains
+# This automatically adds Preset and Datadog to the allowedPolicyMemberDomains constraint
+# Requires Organization Admin permissions
+# Set to false if you don't have org admin access or prefer to manage this manually
+# Default: true
+# manage_org_policy = true
+
+# Optional: Customize the MPC service account ID
+# Default: "preset-mpc-sa"
+# mpc_service_account_id = "preset-mpc-sa"
+
+# Optional: Customize the MPC admin role ID
+# Default: "PresetMPCAdminV2"
+# mpc_admin_role_id = "PresetMPCAdminV2"
