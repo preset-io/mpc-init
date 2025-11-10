@@ -1,27 +1,62 @@
-# Preset MPC Bootstrap Scripts
+# MPC Setup for GCP
 
-This repository contains a collection of bootstrap scripts for Preset Managed Private Clouds (MPCs).
-We currently support Cloudformation as the primary bootstrap method, with Terraform support currently in beta.
+This repository provides tools to set up MPC (Managed Private Cloud) permissions in your GCP project.
 
-## Prerequisites
+## Setup Options
 
-1. An AWS account with sufficient permissions to create IAM roles and policies, and to create and manage Cloudformation stacks.
-2. An external ID for the Preset MPC you wish to bootstrap. This can be obtained from the Preset team.
+Choose the method that best fits your workflow:
 
-## Cloudformation
+### Option 1: Terraform Module (Recommended)
 
-The Cloudformation bootstrap script is located in the `cloudformation` directory. 
+For organizations using Terraform for infrastructure management.
 
-### Usage
+**See the complete documentation:** [gcp/terraform/modules/mpc-permissions/README.md](gcp/terraform/modules/mpc-permissions/README.md)
 
-1. Simply apply the [preset-mpc-iam.yaml](cloudformation%2Fpreset-mpc-iam.yaml) Cloudformation template to your AWS account.
-2. When prompted, enter the external ID for your Preset MPC provided by the Preset team.
-3. Choose `production` when prompted for the environment. (The staging environment is used for internal testing only.)
+The Terraform module provides:
+- Infrastructure as code with version control
+- Drift detection and management
+- CI/CD integration
+- Declarative configuration
 
-### Outputs
+### Option 2: Shell Script
 
-* A set of IAM roles and policies for the Preset MPC that will allow the Preset team to provision your cluster.
+For quick one-time setup or organizations not using Terraform.
 
-## Terraform
+**Script location:** [gcp/shell/setup-mpc-permissions.sh](gcp/shell/setup-mpc-permissions.sh)
 
-Coming soon.
+**Quick start:**
+```bash
+export PROJECT_ID="your-project-id"
+export PRESET_SERVICE_ACCOUNT="Service account email provided by Preset"
+./gcp/shell/setup-mpc-permissions.sh
+```
+
+The shell script is:
+- Idempotent (safe to run multiple times)
+- Self-contained
+- Easy to audit
+
+## What Gets Created
+
+Both methods create the following resources in your GCP project:
+
+1. **Custom IAM Role** (`PresetMPCAdminV2`) - Contains all necessary permissions for Preset to manage MPC infrastructure
+2. **MPC Service Account** (`preset-mpc-sa`) - Used by Preset to manage your resources
+3. **IAM Bindings** - Grants appropriate permissions to Preset's service account
+
+## Support
+
+If you encounter issues or need assistance:
+
+1. Review the detailed documentation for your chosen method (links above)
+2. Check the GCP Cloud Console for error messages
+3. Contact your Preset support representative with:
+   - Your project ID
+   - Error messages or logs
+   - Which setup method you're using
+
+## Additional Resources
+
+- [GCP IAM Custom Roles Documentation](https://cloud.google.com/iam/docs/creating-custom-roles)
+- [GCP Service Accounts Documentation](https://cloud.google.com/iam/docs/service-accounts)
+- [Terraform Google Provider Documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
