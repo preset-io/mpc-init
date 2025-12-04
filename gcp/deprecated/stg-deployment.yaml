@@ -1,0 +1,10 @@
+imports:
+  - path: preset-mpc-org.jinja
+
+resources:
+  - name: iam
+    type: preset-mpc-org.jinja
+    properties:
+      presetServiceAccount: 'terraform-automation@staging-433809.iam.gserviceaccount.com'
+      MPCServiceAccountId: "mpc-service-account"
+      MPCAdminRoleId: "PresetMPCAdmin2"

@@ -1,0 +1,539 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template creates IAM resources required to get MPC services up and running in your AWS account
+Parameters:
+  StsExternalId:
+    Type: String
+    Description: An external ID to use when building role assumption policies
+    NoEcho: true
+  PresetEnv:
+    Description: "Preset environment"
+    Type: String
+    AllowedValues:
+      - Production
+      - Staging
+    Default: Production
+
+Mappings:
+  PresetAccounts:
+    Staging:
+      AccountId: "151737340033"
+    Production:
+      AccountId: "125098402723"
+    DevOps:
+      AccountId: "915571001068"
+
+Conditions:
+  HasStsExternalId: !Not [!Equals [!Ref StsExternalId, ""]]
+
+Resources:
+  clientAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: client-access-management
+      Roles:
+        - !Ref clientAccessRole
+      PolicyDocument:
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "eks:AccessKubernetesApi",
+                "eks:Describe*",
+                "eks:List*",
+                "ec2:*",
+                "ssm:*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Effect": "Deny",
+              "Action": "ssm:*",
+              "Resource": "*",
+              "Condition": {
+                "NotIpAddress": {
+                  "aws:SourceIp": [
+                    "35.161.45.11/32",
+                    "52.32.136.34/32",
+                    "54.244.23.85/32",
+                    "52.88.46.148/32",
+                    "35.161.104.245/32",
+                    "52.88.129.18/32"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+
+  infraPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: preset-provision-infra
+      Roles:
+        - !Ref workspaceProvisionerRole
+      PolicyDocument:
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "VPC",
+              "Effect": "Allow",
+              "Action": [
+                "ec2:ModifyVpc*",
+                "ec2:Attach*",
+                "ec2:Detach*"
+              ],
+              "Resource": "*"
+            },{
+              "Sid": "cfn",
+              "Effect": "Allow",
+              "Action": [
+                "cloudformation:Get*",
+                "cloudformation:List*",
+                "cloudformation:Describe*",
+                "cloudformation:ValidateTemplate",
+                "cloudformation:Create*",
+                "cloudformation:Update*",
+                "cloudformation:Tag*",
+                "cloudformation:Untag*",
+              ],
+              "Resource": "*"
+            },
+            {
+              "Sid": "cfnDelete",
+              "Effect": "Allow",
+              "Action": [
+                "cloudformation:Delete*"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Sid": "lambda",
+              "Effect": "Allow",
+              "Action": [
+                "lambda:Add*",
+                "lambda:Remove*",
+                "lambda:List*",
+                "lambda:Get*",
+                "lambda:Create*",
+                "lambda:Update*",
+                "lambda:Put*",
+                "lambda:Tag*",
+                "lambda:Untag*",
+                "lambda:Publish*",
+              ],
+              "Resource": "*"
+            },
+            {
+              "Sid": "LambdaDelete",
+              "Effect": "Allow",
+              "Action": [
+                "lambda:DeleteFunction"
+              ],
+              "Resource": !Sub "arn:aws:lambda:*:${AWS::AccountId}:function:datadog_log_monitoring"
+            },{
+              "Sid": "secretsManager",
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:List*",
+                "secretsmanager:Describe*",
+                "secretsmanager:Get*",
+                "secretsmanager:Tag*",
+                "secretsmanager:Untag*",
+                "secretsmanager:Create*",
+                "secretsmanager:Update*",
+                "secretsmanager:Put*",
+              ],
+              "Resource": "*"
+            },{
+              "Sid": "SecretManagerDelete",
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:Delete*"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            },
+          ]
+        }
+  provisionerPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: preset-provision-workspaces
+      Roles:
+        - !Ref workspaceProvisionerRole
+      PolicyDocument:
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "route53",
+              "Effect": "Allow",
+              "Action": [
+                "route53:Get*",
+                "route53:List*",
+                "route53:CreateHostedZone",
+                "route53:Change*"
+              ],
+              "Resource": "*"
+            }, {
+             "Sid": "route53Resolver",
+              "Effect": "Allow",
+              "Action": [
+                "route53resolver:Create*",
+                "route53resolver:Delete*",
+                "route53resolver:Update*",
+                "route53resolver:Get*",
+                "route53resolver:List*",
+                "route53resolver:Associate*",
+                "route53resolver:Disassociate*",
+                "route53resolver:TagResource"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "route53Delete",
+              "Effect": "Allow",
+              "Action": [
+                "route53:DeleteHostedZone"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "acm",
+              "Effect": "Allow",
+              "Action": [
+                "acm:RequestCertificate",
+                "acm:AddTagsToCertificate",
+                "acm:DescribeCertificate",
+                "acm:ListTagsForCertificate"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "acmDelete",
+              "Effect": "Allow",
+              "Action": [
+                "acm:DeleteCertificate"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            }, {
+              "Sid": "logs",
+              "Effect": "Allow",
+              "Action": [
+                "logs:Untag*",
+                "logs:Tag*",
+                "logs:Create*",
+                "logs:Put*",
+                "logs:Describe*",
+                "logs:List*"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "logsDelete",
+              "Effect": "Allow",
+              "Action": [
+                "logs:DeleteLogGroup",
+                "logs:DeleteSubscriptionFilter"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            }, {
+              "Sid": "rds",
+              "Effect": "Allow",
+              "Action": [
+                "rds:RemoveTagsFromResource",
+                "rds:AddTagsToResource",
+                "rds:Create*",
+                "rds:Describe*",
+                "rds:Modify*",
+                "rds:Promote*",
+                "rds:Reboot*",
+                "rds:Remove*",
+                "rds:ListTagsForResource",
+                "rds:ResetDBParameterGroup",
+                "rds:CopyDBParameterGroup"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "rdsRemove",
+              "Effect": "Allow",
+              "Action": [
+                "rds:Delete*",
+                "rds:Stop*",
+                "rds:Start*"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            }, {
+              "Sid": "Elasticache",
+              "Effect": "Allow",
+              "Action": [
+                "elasticache:UntagResource",
+                "elasticache:Describe*",
+                "elasticache:Create*",
+                "elasticache:AddTagsToResource",
+                "elasticache:RemoveTagsFromResource",
+                "elasticache:ModifyCacheParameterGroup",
+                "elasticache:ModifyReplicationGroup",
+                "elasticache:ListTagsForResource",
+                "elasticache:BatchApplyUpdateAction"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "ElasicLoadBalancing",
+              "Effect": "Allow",
+              "Action": [
+                "elasticloadbalancing:*"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "elasticacheDelete",
+              "Effect": "Allow",
+              "Action": ["elasticache:Delete*"],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": { "aws:ResourceTag/Owner": "Preset-io"}
+              }
+            }, {
+              "Sid": "ec2",
+              "Effect": "Allow",
+              "Action": [
+                "ec2:AllocateAddress",
+                "ec2:AssignPrivateIpAddresses",
+                "ec2:Associate*",
+                "ec2:AttachNetworkInterface",
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:Create*",
+                "ec2:Describe*",
+                "ec2:Detach*",
+                "ec2:Disassociate*",
+                "ec2:ReleaseAddress",
+                "ec2:Revoke*",
+                "ec2:Update*",
+                "ec2:GetLaunchTemplateData",
+                "ec2:ModifyLaunchTemplate",
+                "ec2:TerminateInstances",
+                "ec2:RunInstances",
+                "ec2:DeleteNetworkAclEntry",
+                "ec2:CreateNetworkAclEntry",
+                "ec2:ReplaceNetworkAclEntry"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "ec2Delete",
+              "Effect": "Allow",
+              "Action": [
+                "ec2:Delete*"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            },{
+              "Sid": "ec2DeleteTags",
+              "Effect": "Allow",
+              "Action": [
+                "ec2:DeleteTags"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "eks",
+              "Effect": "Allow",
+              "Action": [
+                "eks:Associate*",
+                "eks:Create*",
+                "eks:Describe*",
+                "eks:List*",
+                "eks:Update*",
+                "eks:TagResource",
+                "eks:UntagResource",
+                "eks:DeleteAddon"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "eksDelete",
+              "Effect": "Allow",
+              "Action": [
+                "eks:Delete*"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            }, {
+              "Sid": "Autoscalng",
+              "Effect": "Allow",
+              "Action": [
+                "autoscaling:EnableMetricsCollection",
+                "autoscaling:AttachInstances",
+                "autoscaling:Create*",
+                "autoscaling:Delete*",
+                "autoscaling:Describe*",
+                "autoscaling:DetachInstances",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:SetInstanceProtection",
+                "autoscaling:SuspendProcesses"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "iam",
+              "Effect": "Allow",
+              "Action": [
+                "iam:AddRoleToInstanceProfile",
+                "iam:AttachRolePolicy",
+                "iam:CreateInstanceProfile",
+                "iam:CreateOpenIDConnectProvider",
+                "iam:CreatePolicy",
+                "iam:CreatePolicyVersion",
+                "iam:CreateRole",
+                "iam:CreateServiceLinkedRole",
+                "iam:DeletePolicyVersion",
+                "iam:Get*",
+                "iam:List*",
+                "iam:PutRolePolicy",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:TagOpenIDConnectProvider",
+                "iam:TagRole",
+                "iam:UntagRole",
+                "iam:UpdateOpenIDConnectProviderThumbprint",
+                "iam:TagPolicy",
+                "iam:TagInstanceProfile",
+                "iam:UpdateAssumeRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:DeletePolicy",
+                "iam:UpdateRoleDescription",
+                "iam:PassRole"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "iamDelete",
+              "Effect": "Allow",
+              "Action": [
+                "iam:Delete*"
+              ],
+              "Resource": "*",
+              "Condition": {
+                "StringEquals": {
+                  "aws:ResourceTag/Owner": "Preset-io"
+                }
+              }
+            }, {
+              "Sid": "kms",
+              "Effect": "Allow",
+              "Action": [
+                "kms:*"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "kmsDelete",
+              "Effect": "Allow",
+              "Action": [
+                "kms:ScheduleKeyDeletion",
+                "kms:DeleteAlias"
+              ],
+              "Resource": !Join [ "", ["arn:aws:kms:*:", !Ref "AWS::AccountId", ":alias/velero-backups-*"] ],
+            }, {
+              "Sid": "s3",
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucketVersions",
+                "s3:CreateBucket",
+                "s3:Get*",
+                "s3:Put*",
+                "s3:List*",
+                "s3:Replicate*"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "states",
+              "Effect": "Allow",
+              "Action": [
+                "states:ListStateMachines"
+              ],
+              "Resource": "*"
+            }, {
+              "Sid": "s3Delete",
+              "Effect": "Allow",
+              "Action": [
+                "s3:Delete*"
+              ],
+              "Resource": "*"
+            },{
+              "Sid": "wafv2",
+              "Effect": "Allow",
+              "Action": [
+                "wafv2:*"
+              ],
+              "Resource": "*"
+            },{
+              "Sid": "firehose",
+              "Effect": "Allow",
+              "Action": [
+                "firehose:*"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+
+  # Cross-account access role for Preset created and managed resources
+  workspaceProvisionerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: "sts:AssumeRole"
+            Sid: ''
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Join ['', ['arn:aws:iam::', !FindInMap [PresetAccounts, !Ref "PresetEnv", AccountId], ':root' ]]
+                - !Join ['', ['arn:aws:iam::', !FindInMap [PresetAccounts, "DevOps", AccountId], ':root' ]]
+            Condition: !If
+              - HasStsExternalId
+              - StringEquals:
+                  sts:ExternalId: !Ref StsExternalId
+              - !Ref AWS::NoValue
+      Description: Preset Cluster Provisioner Role
+      RoleName: preset-admin
+
+    # Access role for cluster management by client
+  clientAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Preset Cluster Provisioner Role
+      RoleName: mpc-account-mgmt
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: "sts:AssumeRole"
+            Sid: ''
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Join [ '', [ 'arn:aws:iam::', !Ref "AWS::AccountId", ':root' ] ]
