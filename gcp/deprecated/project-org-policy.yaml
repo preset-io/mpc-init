@@ -1,0 +1,7 @@
+---
+constraint: constraints/iam.allowedPolicyMemberDomains
+listPolicy:
+  allowedValues:
+    - C0147pk0i  # Datadog
+    - C01i2thyr  # Preset
+  inheritFromParent: true
