@@ -1,0 +1,20 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Tenant ID of the managing tenant (REQUIRED - provided by Preset)
+managing_tenant_id = "c8309e53-d775-46bd-947f-7fe0d1fb7b7a"
+
+# Object ID of the user/group to grant access (REQUIRED - provided by Preset)
+principal_id = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
+
+# Optional: Role to assign
+# Options: Owner, Contributor, Reader
+# Default: "Contributor"
+# role = "Contributor"
+
+# Optional: Display name for the principal
+# Default: "Prese MPC Admin"
+# principal_name = "Preset MPC Admin"
+
+# Optional: Name of the Lighthouse offer
+# Default: "Preset MPC Management Access"
+# offer_name = "Preset MPC Management Access"

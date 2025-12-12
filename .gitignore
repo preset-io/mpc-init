@@ -50,3 +50,5 @@ override.tf.json
 # vscode
 .vscode
 
+$ lighthouse
+lighthouse.json
