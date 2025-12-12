@@ -13,7 +13,7 @@ resource "azurerm_lighthouse_definition" "this" {
 
   authorization {
     principal_id           = var.principal_id
-    role_definition_id     = local.role_definition_ids[var.role]
+    role_definition_id     = azurerm_role_definition.mpc_role.role_definition_id
     principal_display_name = var.principal_name
   }
 }

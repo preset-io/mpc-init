@@ -17,3 +17,13 @@ output "managing_tenant_id" {
   description = "The tenant ID that now has access"
   value       = var.managing_tenant_id
 }
+
+output "custom_role_id" {
+  description = "The ID of the custom MPC admin role"
+  value       = azurerm_role_definition.mpc_role.role_definition_id
+}
+
+output "custom_role_name" {
+  description = "The name of the custom MPC admin role"
+  value       = azurerm_role_definition.mpc_role.name
+}

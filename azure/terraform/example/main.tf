@@ -29,12 +29,6 @@ variable "principal_id" {
   type        = string
 }
 
-variable "role" {
-  description = "Role to assign: Owner, Contributor, or Reader"
-  type        = string
-  default     = "Contributor"
-}
-
 variable "principal_name" {
   description = "Display name for the principal"
   type        = string
@@ -47,15 +41,21 @@ variable "offer_name" {
   default     = "Preset MPC Management Access"
 }
 
+variable "custom_role_name" {
+  description = "Name for the custom MPC admin role"
+  type        = string
+  default     = "Preset MPC Admin"
+}
+
 module "preset_mpc_permissions" {
   # source = "github.com/preset-io/mpc-init//azure/terraform/modules/mpc-permissions?ref=master"
   source = "../modules/mpc-permissions"
 
   managing_tenant_id = var.managing_tenant_id
   principal_id       = var.principal_id
-  role               = var.role
   principal_name     = var.principal_name
   offer_name         = var.offer_name
+  custom_role_name   = var.custom_role_name
 }
 
 output "lighthouse_definition_id" {
@@ -76,4 +76,14 @@ output "subscription_id" {
 output "managing_tenant_id" {
   description = "The tenant ID that now has access"
   value       = module.preset_mpc_permissions.managing_tenant_id
+}
+
+output "custom_role_id" {
+  description = "The ID of the custom MPC admin role"
+  value       = module.preset_mpc_permissions.custom_role_id
+}
+
+output "custom_role_name" {
+  description = "The name of the custom MPC admin role"
+  value       = module.preset_mpc_permissions.custom_role_name
 }

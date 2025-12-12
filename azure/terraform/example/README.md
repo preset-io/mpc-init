@@ -1,6 +1,6 @@
 # MPC Permissions Setup Example (Azure)
 
-This example demonstrates how to use the MPC permissions module to set up Azure Lighthouse delegation for Preset MPC access.
+This example demonstrates how to use the MPC permissions module to set up Azure Lighthouse delegation with a custom MPC admin role for Preset access.
 
 ## Prerequisites
 
@@ -32,6 +32,7 @@ cp terraform.tfvars.example terraform.tfvars
 Edit the `terraform.tfvars` file with values provided by Preset:
 
 ```hcl
+subscription_id    = "your-subscription-id"
 managing_tenant_id = "c8309e53-d775-46bd-947f-7fe0d1fb7b7a"
 principal_id       = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
 ```
@@ -49,6 +50,7 @@ terraform plan
 ```
 
 This will show you what resources will be created:
+- Custom role definition (`Preset MPC Admin`) with specific MPC permissions
 - Lighthouse definition (specifies what access is delegated)
 - Lighthouse assignment (activates the delegation)
 
@@ -76,7 +78,13 @@ Expected output:
 ```
 Name                          Description                                      ManagingTenant    State
 ----------------------------  -----------------------------------------------  ----------------  ---------
-Preset MPC Management Access  Grants Contributor access to Preset MPC tenant   Preset            Succeeded
+Preset MPC Management Access  Grants custom MPC admin access to Preset tenant  Preset            Succeeded
+```
+
+To verify the custom role was created:
+
+```bash
+az role definition list --name "Preset MPC Admin" --output table
 ```
 
 ## Outputs
@@ -90,15 +98,33 @@ lighthouse_definition_id = "/subscriptions/.../providers/Microsoft.ManagedServic
 lighthouse_assignment_id = "/subscriptions/.../providers/Microsoft.ManagedServices/registrationAssignments/..."
 subscription_id = "your-subscription-id"
 managing_tenant_id = "c8309e53-d775-46bd-947f-7fe0d1fb7b7a"
+custom_role_id = "..."
+custom_role_name = "Preset MPC Admin"
 ```
 
-## Roles
+## Custom Role Permissions
 
-| Role        | Description                              |
-|-------------|------------------------------------------|
-| Owner       | Full access + manage permissions         |
-| Contributor | Full access, can't manage permissions    |
-| Reader      | View only                                |
+The custom role includes permissions for:
+
+| Resource | Description |
+|----------|-------------|
+| **Azure SQL** | Servers, databases, firewall rules |
+| **Redis Cache** | Azure Cache for Redis instances |
+| **Storage** | Storage accounts, blob/file services |
+| **DNS** | Public and private DNS zones, records |
+| **AKS** | Kubernetes clusters and services |
+| **Key Vault** | Vaults, certificates, secrets, keys |
+| **Networking** | VNets, subnets, peerings |
+| **VPN** | Virtual network gateways, connections |
+| **NAT Gateway** | NAT gateways, public IPs |
+| **Security Groups** | Network security groups |
+| **Route Tables** | Custom routing |
+| **Load Balancers** | Load balancers, application gateways |
+| **Compute** | VMs, scale sets, disks (for AKS) |
+| **Container Registry** | ACR for container images |
+| **Private Endpoints** | Private link services |
+
+**Safety restrictions:** The role cannot modify authorization/role assignments or elevate access.
 
 ## Troubleshooting
 
@@ -117,9 +143,17 @@ az managedservices assignment delete --assignment <assignment-id>
 az managedservices definition delete --definition <definition-id>
 ```
 
+### Custom Role Already Exists
+
+If you see errors about the custom role already existing:
+
+```bash
+az role definition delete --name "Preset MPC Admin"
+```
+
 ## Cleanup
 
-To remove the Lighthouse delegation:
+To remove the Lighthouse delegation and custom role:
 
 ```bash
 terraform destroy

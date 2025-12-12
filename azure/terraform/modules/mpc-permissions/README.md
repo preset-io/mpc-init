@@ -1,12 +1,38 @@
 # MPC Permissions Terraform Module (Azure)
 
-Terraform module for setting up Azure Lighthouse delegation to allow a managing tenant to access your subscription.
+Terraform module for setting up Azure Lighthouse delegation with a custom MPC admin role to allow Preset to manage your subscription.
 
 ## Overview
 
 This module creates:
-1. A Lighthouse definition that specifies what access is being delegated
-2. A Lighthouse assignment that activates the delegation on your subscription
+1. A custom IAM role (`Preset MPC Admin`) with specific permissions for MPC infrastructure management
+2. A Lighthouse definition that delegates the custom role to Preset's tenant
+3. A Lighthouse assignment that activates the delegation on your subscription
+
+## Permissions
+
+The custom role includes permissions for:
+
+| Resource | Description |
+|----------|-------------|
+| **Azure SQL** | Servers, databases, firewall rules |
+| **Redis Cache** | Azure Cache for Redis instances |
+| **Storage** | Storage accounts, blob/file services |
+| **DNS** | Public and private DNS zones, records |
+| **AKS** | Kubernetes clusters and services |
+| **Key Vault** | Vaults, certificates, secrets, keys |
+| **Networking** | VNets, subnets, peerings |
+| **VPN** | Virtual network gateways, connections |
+| **NAT Gateway** | NAT gateways, public IPs |
+| **Security Groups** | Network security groups |
+| **Route Tables** | Custom routing |
+| **Load Balancers** | Load balancers, application gateways |
+| **Compute** | VMs, scale sets, disks (for AKS) |
+| **Container Registry** | ACR for container images |
+| **Private Endpoints** | Private link services |
+| **Managed Identities** | User-assigned identities |
+
+**Safety restrictions:** The role cannot modify authorization/role assignments or elevate access.
 
 ## Prerequisites
 
@@ -23,22 +49,23 @@ az account set --subscription <your-subscription-id>
 
 ```hcl
 module "preset_mpc_permissions" {
-  source = "github.com/preset-io/mpc-init//azure/terraform?ref=2.0.0"
+  source = "github.com/preset-io/mpc-init//azure/terraform/modules/mpc-permissions?ref=master"
 
   managing_tenant_id = "<PROVIDED BY Preset>"
   principal_id       = "<PROVIDED BY Preset>"
 }
 ```
 
-### With Custom Role
+### With Custom Names
 
 ```hcl
 module "preset_mpc_permissions" {
-  source = "github.com/preset-io/mpc-init//azure/terraform?ref=2.0.0"
+  source = "github.com/preset-io/mpc-init//azure/terraform/modules/mpc-permissions?ref=master"
 
   managing_tenant_id = "<PROVIDED BY Preset>"
   principal_id       = "<PROVIDED BY Preset>"
-  role               = "Owner"  # Owner, Contributor, or Reader
+  custom_role_name   = "My Custom MPC Role"
+  offer_name         = "My MPC Management Access"
 }
 ```
 
@@ -46,12 +73,12 @@ module "preset_mpc_permissions" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|----------|
-| managing_tenant_id | Tenant ID of the managing tenant (the one receiving access) | string | - | yes |
-| principal_id | Object ID of the user/group to grant access | string | - | yes |
-| principal_name | Display name for the principal | string | "Presetmpc Admin" | no |
-| offer_name | Name of the Lighthouse offer | string | "Presetmpc Management Access" | no |
-| offer_description | Description of the Lighthouse offer | string | "Grants Contributor access to Presetmpc tenant" | no |
-| role | Role to assign: Owner, Contributor, or Reader | string | "Contributor" | no |
+| managing_tenant_id | Tenant ID of the managing tenant (provided by Preset) | string | - | yes |
+| principal_id | Object ID of the user/group to grant access (provided by Preset) | string | - | yes |
+| principal_name | Display name for the principal | string | "Preset MPC Admin" | no |
+| offer_name | Name of the Lighthouse offer | string | "Preset MPC Management Access" | no |
+| offer_description | Description of the Lighthouse offer | string | "Grants custom MPC admin access to Preset tenant" | no |
+| custom_role_name | Name for the custom MPC admin role | string | "Preset MPC Admin" | no |
 
 ## Outputs
 
@@ -61,14 +88,8 @@ module "preset_mpc_permissions" {
 | lighthouse_assignment_id | The ID of the Lighthouse assignment |
 | subscription_id | The subscription ID where Lighthouse is configured |
 | managing_tenant_id | The tenant ID that now has access |
-
-## Roles
-
-| Role        | Description                              |
-|-------------|------------------------------------------|
-| Owner       | Full access + manage permissions         |
-| Contributor | Full access, can't manage permissions    |
-| Reader      | View only                                |
+| custom_role_id | The ID of the custom MPC admin role |
+| custom_role_name | The name of the custom MPC admin role |
 
 ## Verify
 
@@ -86,12 +107,18 @@ Expected output:
 ```
 Name                          Description                                      ManagingTenant    State
 ----------------------------  -----------------------------------------------  ----------------  ---------
-Preset MPC Management Access  Grants Contributor access to Preset MPC tenant   Preset            Succeeded
+Preset MPC Management Access  Grants custom MPC admin access to Preset tenant  Preset            Succeeded
+```
+
+To verify the custom role was created:
+
+```bash
+az role definition list --name "Preset MPC Admin" --output table
 ```
 
 ## Cleanup
 
-To remove the Lighthouse delegation:
+To remove the Lighthouse delegation and custom role:
 
 ```bash
 terraform destroy
