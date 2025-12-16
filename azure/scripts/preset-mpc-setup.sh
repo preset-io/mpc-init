@@ -10,7 +10,7 @@ MANAGING_TENANT_ID="c8309e53-d775-46bd-947f-7fe0d1fb7b7a"  # presetmpc tenant
 PRINCIPAL_ID="6467232d-c71d-4671-a70c-99d1b594b043"        # Preset Service Account
 PRINCIPAL_NAME="Preset MPC Admin"
 OFFER_NAME="Preset MPC Management Access"
-OFFER_DESCRIPTION="Grants Contributor access to Presetmpc tenant"
+OFFER_DESCRIPTION="Grants Contributor access to Preset MPC tenant"
 LOCATION="westus2"
 
 # Role Definition IDs

@@ -41,10 +41,10 @@ variable "offer_name" {
   default     = "Preset MPC Management Access"
 }
 
-variable "custom_role_name" {
-  description = "Name for the custom MPC admin role"
+variable "role" {
+  description = "Built-in role to assign: Owner, Contributor, or Reader"
   type        = string
-  default     = "Preset MPC Admin"
+  default     = "Contributor"
 }
 
 module "preset_mpc_permissions" {
@@ -55,7 +55,7 @@ module "preset_mpc_permissions" {
   principal_id       = var.principal_id
   principal_name     = var.principal_name
   offer_name         = var.offer_name
-  custom_role_name   = var.custom_role_name
+  role               = var.role
 }
 
 output "lighthouse_definition_id" {
@@ -78,12 +78,7 @@ output "managing_tenant_id" {
   value       = module.preset_mpc_permissions.managing_tenant_id
 }
 
-output "custom_role_id" {
-  description = "The ID of the custom MPC admin role"
-  value       = module.preset_mpc_permissions.custom_role_id
-}
-
-output "custom_role_name" {
-  description = "The name of the custom MPC admin role"
-  value       = module.preset_mpc_permissions.custom_role_name
+output "role" {
+  description = "The role assigned to the principal"
+  value       = module.preset_mpc_permissions.role
 }

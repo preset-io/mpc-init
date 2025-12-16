@@ -13,11 +13,16 @@ variable "offer_name" {
 variable "offer_description" {
   description = "Description of the Lighthouse offer"
   type        = string
-  default     = "Grants custom MPC admin access to Preset tenant"
+  default     = "Grants Contributor access to Preset MPC tenant"
 }
 
-variable "custom_role_name" {
-  description = "Name for the custom MPC admin role"
+variable "role" {
+  description = "Built-in role to assign: Owner, Contributor, or Reader"
   type        = string
-  default     = "Preset MPC Admin"
+  default     = "Contributor"
+
+  validation {
+    condition     = contains(["Owner", "Contributor", "Reader"], var.role)
+    error_message = "Role must be Owner, Contributor, or Reader."
+  }
 }
