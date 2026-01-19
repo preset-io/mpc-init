@@ -496,6 +496,16 @@ Resources:
                 "firehose:*"
               ],
               "Resource": "*"
+            },{
+              "Sid": "ssmPublicParameters",
+              "Effect": "Allow",
+              "Action": [
+                "ssm:GetParameter"
+              ],
+              "Resource": [
+                "arn:aws:ssm:*::parameter/aws/service/eks/*",
+                "arn:aws:ssm:*::parameter/aws/service/bottlerocket/*"
+              ]
             }
           ]
         }
