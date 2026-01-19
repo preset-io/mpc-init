@@ -396,7 +396,9 @@ Resources:
                 "autoscaling:SetDesiredCapacity",
                 "autoscaling:UpdateAutoScalingGroup",
                 "autoscaling:SetInstanceProtection",
-                "autoscaling:SuspendProcesses"
+                "autoscaling:SuspendProcesses",
+                "autoscaling:StartInstanceRefresh",
+                "autoscaling:CancelInstanceRefresh"
               ],
               "Resource": "*"
             }, {
@@ -496,6 +498,16 @@ Resources:
                 "firehose:*"
               ],
               "Resource": "*"
+            },{
+              "Sid": "ssmPublicParameters",
+              "Effect": "Allow",
+              "Action": [
+                "ssm:GetParameter"
+              ],
+              "Resource": [
+                "arn:aws:ssm:*::parameter/aws/service/eks/*",
+                "arn:aws:ssm:*::parameter/aws/service/bottlerocket/*"
+              ]
             }
           ]
         }

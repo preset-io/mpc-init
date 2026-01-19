@@ -31,7 +31,7 @@ properties([
 
 // Constants
 STATIC_ASSETS_BUCKET = "preset-io-static-assets"
-CLOUDFORMATION_FILE = "cloud-init/mpc/aws/preset-iam.yaml"
+CLOUDFORMATION_FILE = "aws/preset-iam.yaml"
 
 podTemplate(
     imagePullSecrets: ['preset-pull'],
