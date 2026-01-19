@@ -396,7 +396,9 @@ Resources:
                 "autoscaling:SetDesiredCapacity",
                 "autoscaling:UpdateAutoScalingGroup",
                 "autoscaling:SetInstanceProtection",
-                "autoscaling:SuspendProcesses"
+                "autoscaling:SuspendProcesses",
+                "autoscaling:StartInstanceRefresh",
+                "autoscaling:CancelInstanceRefresh"
               ],
               "Resource": "*"
             }, {
