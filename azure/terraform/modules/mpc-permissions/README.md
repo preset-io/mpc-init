@@ -57,8 +57,8 @@ module "preset_mpc_permissions" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|----------|
 | managing_tenant_id | Tenant ID of the managing tenant (provided by Preset) | string | - | yes |
-| principal_id | Object ID of the user/group to grant access (provided by Preset) | string | - | yes |
-| principal_name | Display name for the principal | string | "Preset MPC Admin" | no |
+| principal_id | Object ID of the service principal to grant access (provided by Preset) | string | - | yes |
+| principal_name | Display name for the service principal | string | "Preset MPC Service Principal" | no |
 | offer_name | Name of the Lighthouse offer | string | "Preset MPC Management Access" | no |
 | offer_description | Description of the Lighthouse offer | string | "Grants Contributor access to Preset MPC tenant" | no |
 | role | Built-in role to assign: Owner, Contributor, or Reader | string | "Contributor" | no |
@@ -71,7 +71,7 @@ module "preset_mpc_permissions" {
 | lighthouse_assignment_id | The ID of the Lighthouse assignment |
 | subscription_id | The subscription ID where Lighthouse is configured |
 | managing_tenant_id | The tenant ID that now has access |
-| role | The role assigned to the principal |
+| role | The role assigned to the service principal |
 
 ## Verify
 

@@ -6,7 +6,7 @@ subscription_id = "your-subscription-id"
 # Tenant ID of the managing tenant (REQUIRED - provided by Preset)
 managing_tenant_id = "c8309e53-d775-46bd-947f-7fe0d1fb7b7a"
 
-# Object ID of the user/group to grant access (REQUIRED - provided by Preset)
+# Object ID of the service principal to grant access (REQUIRED - provided by Preset)
 principal_id = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
 
 # Optional: Built-in role to assign
@@ -14,9 +14,9 @@ principal_id = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
 # Default: "Contributor"
 # role = "Contributor"
 
-# Optional: Display name for the principal
-# Default: "Preset MPC Admin"
-# principal_name = "Preset MPC Admin"
+# Optional: Display name for the service principal
+# Default: "Preset MPC Service Principal"
+# principal_name = "Preset MPC Service Principal"
 
 # Optional: Name of the Lighthouse offer
 # Default: "Preset MPC Management Access"

@@ -1,7 +1,7 @@
 variable "principal_name" {
-  description = "Display name for the principal"
+  description = "Display name for the service principal"
   type        = string
-  default     = "Preset MPC Admin"
+  default     = "Preset MPC Service Principal"
 }
 
 variable "offer_name" {

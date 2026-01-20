@@ -25,14 +25,14 @@ variable "managing_tenant_id" {
 }
 
 variable "principal_id" {
-  description = "Object ID of the user/group to grant access (provided by Preset)"
+  description = "Object ID of the service principal to grant access (provided by Preset)"
   type        = string
 }
 
 variable "principal_name" {
-  description = "Display name for the principal"
+  description = "Display name for the service principal"
   type        = string
-  default     = "Preset MPC Admin"
+  default     = "Preset MPC Service Principal"
 }
 
 variable "offer_name" {

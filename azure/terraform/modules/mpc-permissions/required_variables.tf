@@ -4,6 +4,6 @@ variable "managing_tenant_id" {
 }
 
 variable "principal_id" {
-  description = "Object ID of the user/group to grant access"
+  description = "Object ID of the service principal to grant access"
   type        = string
 }
