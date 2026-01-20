@@ -1,0 +1,23 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Your Azure subscription ID (REQUIRED)
+subscription_id = "your-subscription-id"
+
+# Tenant ID of the managing tenant (REQUIRED - provided by Preset)
+managing_tenant_id = "c8309e53-d775-46bd-947f-7fe0d1fb7b7a"
+
+# Object ID of the service principal to grant access (REQUIRED - provided by Preset)
+principal_id = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
+
+# Optional: Built-in role to assign
+# Options: Owner, Contributor, Reader
+# Default: "Contributor"
+# role = "Contributor"
+
+# Optional: Display name for the service principal
+# Default: "Preset MPC Service Principal"
+# principal_name = "Preset MPC Service Principal"
+
+# Optional: Name of the Lighthouse offer
+# Default: "Preset MPC Management Access"
+# offer_name = "Preset MPC Management Access"
