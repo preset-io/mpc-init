@@ -4,19 +4,24 @@ This example demonstrates how to use the MPC permissions module to set up Azure 
 
 ## Prerequisites
 
-1. **Azure CLI Installed:**
+1. **Service Principal Requirements (Preset side):**
+   - Service principal must exist in Preset's (managing) tenant
+   - App registration must be **multi-tenant** ("Accounts in any organizational directory")
+   - Use the **Enterprise Application Object ID** (not App Registration Object ID) for `principal_id`
+
+2. **Azure CLI Installed:**
    - Version >= 2.0
 
-2. **Azure Authentication:**
+3. **Azure Authentication:**
    ```bash
    az login --tenant <your-tenant-id>
    az account set --subscription <your-subscription-id>
    ```
 
-3. **Terraform Installed:**
+4. **Terraform Installed:**
    - Version >= 1.6.3
 
-4. **Required Permissions:**
+5. **Required Permissions:**
    - Owner or User Access Administrator on the subscription
 
 ## Usage

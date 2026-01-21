@@ -20,7 +20,12 @@ The module uses Azure built-in roles:
 
 ## Prerequisites
 
-1. **Login to Azure (as the subscription owner):**
+1. **Service Principal Requirements (Preset side):**
+   - Service principal must exist in Preset's (managing) tenant
+   - App registration must be **multi-tenant** ("Accounts in any organizational directory")
+   - Use the **Enterprise Application Object ID** (not App Registration Object ID) for `principal_id`
+
+2. **Login to Azure (as the subscription owner):**
 
 ```bash
 az login --tenant <your-tenant>
