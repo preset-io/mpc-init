@@ -3,6 +3,10 @@
 # Lighthouse Setup Script
 # Run this in the tenant that OWNS the subscription (the one granting access)
 #
+# This script is IDEMPOTENT - safe to run multiple times. It generates a
+# deterministic UUID based on subscription + tenant + offer name, so re-running
+# will update the existing Lighthouse definition rather than creating duplicates.
+#
 # Prerequisites:
 # - The service principal must exist in the managing tenant (Preset)
 # - The app registration must be multi-tenant ("Accounts in any organizational directory")
@@ -31,9 +35,27 @@ if [[ -z "$PRINCIPAL_ID" ]]; then
   exit 1
 fi
 
-# Generate UUID
-UUID=$(uuidgen 2>/dev/null || cat /proc/sys/kernel/random/uuid 2>/dev/null || python3 -c "import uuid; print(uuid.uuid4())")
-echo "Generated UUID: $UUID"
+# Get current subscription ID
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+if [[ -z "$SUBSCRIPTION_ID" ]]; then
+  echo "Error: Could not get subscription ID. Make sure you're logged in with 'az login'."
+  exit 1
+fi
+echo "Subscription ID: $SUBSCRIPTION_ID"
+
+# Generate deterministic UUID based on subscription + managing tenant + offer name
+# This makes the script idempotent - same inputs always produce same UUID
+HASH_INPUT="${SUBSCRIPTION_ID}${MANAGING_TENANT_ID}${OFFER_NAME}"
+if command -v md5sum &> /dev/null; then
+  HASH=$(echo -n "$HASH_INPUT" | md5sum | cut -d' ' -f1)
+elif command -v md5 &> /dev/null; then
+  HASH=$(echo -n "$HASH_INPUT" | md5)
+else
+  echo "Error: md5sum or md5 command not found"
+  exit 1
+fi
+UUID=$(echo "$HASH" | sed 's/^\(........\)\(....\)\(....\)\(....\)\(............\).*/\1-\2-\3-\4-\5/')
+echo "Deterministic UUID: $UUID (based on subscription + tenant + offer name)"
 
 # Create template
 cat > lighthouse.json << EOF
