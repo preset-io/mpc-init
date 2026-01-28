@@ -184,20 +184,6 @@ Resources:
               ],
               "Resource": "*"
             }, {
-             "Sid": "route53Resolver",
-              "Effect": "Allow",
-              "Action": [
-                "route53resolver:Create*",
-                "route53resolver:Delete*",
-                "route53resolver:Update*",
-                "route53resolver:Get*",
-                "route53resolver:List*",
-                "route53resolver:Associate*",
-                "route53resolver:Disassociate*",
-                "route53resolver:TagResource"
-              ],
-              "Resource": "*"
-            }, {
               "Sid": "route53Delete",
               "Effect": "Allow",
               "Action": [
