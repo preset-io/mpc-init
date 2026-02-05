@@ -10,13 +10,17 @@ This module creates:
 
 ## Roles
 
-The module uses Azure built-in roles:
+The module delegates two roles via Azure Lighthouse:
 
-| Role        | Description                              |
-|-------------|------------------------------------------|
-| Owner       | Full access + manage permissions         |
-| Contributor | Full access, can't manage permissions (default) |
-| Reader      | View only                                |
+1. **Primary role** (configurable via `role` variable): controls resource management access
+2. **User Access Administrator**: always included, allows the service principal to create role assignments (`Microsoft.Authorization/roleAssignments/write`)
+
+| Role                       | Description                                     |
+|----------------------------|-------------------------------------------------|
+| Owner                      | Full access + manage permissions                |
+| Contributor                | Full access, can't manage permissions (default) |
+| Reader                     | View only                                       |
+| User Access Administrator  | Manage role assignments (always granted)        |
 
 ## Prerequisites
 
