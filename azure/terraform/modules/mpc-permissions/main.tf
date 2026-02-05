@@ -16,6 +16,17 @@ resource "azurerm_lighthouse_definition" "this" {
     role_definition_id     = local.role_definition_ids[var.role]
     principal_display_name = var.principal_name
   }
+
+  authorization {
+    principal_id                  = var.principal_id
+    role_definition_id            = local.role_definition_ids["User_Access_Administrator"]
+    principal_display_name        = var.principal_name
+    delegated_role_definition_ids = [
+      local.role_definition_ids["Contributor"],
+      local.role_definition_ids["Reader"],
+      local.role_definition_ids["Monitoring_Reader"],
+    ]
+  }
 }
 
 # Lighthouse Assignment

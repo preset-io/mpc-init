@@ -19,14 +19,20 @@ MANAGING_TENANT_ID="c8309e53-d775-46bd-947f-7fe0d1fb7b7a"  # Preset tenant (mana
 PRINCIPAL_ID=""  # Enterprise Application Object ID (NOT App Registration Object ID) - provided by Preset
 PRINCIPAL_NAME="Preset MPC Service Principal"
 OFFER_NAME="Preset MPC Management Access"
-OFFER_DESCRIPTION="Grants Contributor access to Preset MPC tenant"
+OFFER_DESCRIPTION="Grants Contributor and User Access Administrator (scoped) access to Preset MPC tenant"
 LOCATION="westus2"
 
 # Role Definition IDs
-# Owner:       8e3af657-a8ff-443c-a75c-2fe8c4bcb635
-# Contributor: b24988ac-6180-42a0-ab88-20f7382dd24c
-# Reader:      acdd72a7-3385-48ef-bd42-f606fba81ae7
+# Owner:                     8e3af657-a8ff-443c-a75c-2fe8c4bcb635
+# Contributor:               b24988ac-6180-42a0-ab88-20f7382dd24c
+# Reader:                    acdd72a7-3385-48ef-bd42-f606fba81ae7
+# Monitoring Reader:         43d0d8ad-25c7-4714-9337-8ba259a9fe05
+# User Access Administrator: 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9
 ROLE_ID="b24988ac-6180-42a0-ab88-20f7382dd24c"  # Contributor
+USER_ACCESS_ADMIN_ROLE_ID="18d7d88d-d35e-4fb5-a5c3-7773c20a72d9"
+
+# Roles the SP is allowed to assign via User Access Administrator (for Lighthouse delegation)
+DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05"]'
 
 # Validate required configuration
 if [[ -z "$PRINCIPAL_ID" ]]; then
@@ -77,6 +83,12 @@ cat > lighthouse.json << EOF
             "principalId": "$PRINCIPAL_ID",
             "roleDefinitionId": "$ROLE_ID",
             "principalIdDisplayName": "$PRINCIPAL_NAME"
+          },
+          {
+            "principalId": "$PRINCIPAL_ID",
+            "roleDefinitionId": "$USER_ACCESS_ADMIN_ROLE_ID",
+            "principalIdDisplayName": "$PRINCIPAL_NAME",
+            "delegatedRoleDefinitionIds": $DELEGATED_ROLE_IDS
           }
         ]
       }
