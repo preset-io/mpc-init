@@ -16,23 +16,25 @@ set -e
 
 # Configuration - modify these values
 MANAGING_TENANT_ID="c8309e53-d775-46bd-947f-7fe0d1fb7b7a"  # Preset tenant (managing tenant)
-PRINCIPAL_ID=""  # Enterprise Application Object ID (NOT App Registration Object ID) - provided by Preset
+PRINCIPAL_ID="8e617468-5aae-47d9-b1c0-32a5f63820b6"  # Enterprise Application Object ID (NOT App Registration Object ID) - provided by Preset
 PRINCIPAL_NAME="Preset MPC Service Principal"
 OFFER_NAME="Preset MPC Management Access"
 OFFER_DESCRIPTION="Grants Contributor and User Access Administrator (scoped) access to Preset MPC tenant"
 LOCATION="westus2"
 
 # Role Definition IDs
-# Owner:                     8e3af657-a8ff-443c-a75c-2fe8c4bcb635
-# Contributor:               b24988ac-6180-42a0-ab88-20f7382dd24c
-# Reader:                    acdd72a7-3385-48ef-bd42-f606fba81ae7
-# Monitoring Reader:         43d0d8ad-25c7-4714-9337-8ba259a9fe05
-# User Access Administrator: 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9
+# Owner:                              8e3af657-a8ff-443c-a75c-2fe8c4bcb635
+# Contributor:                        b24988ac-6180-42a0-ab88-20f7382dd24c
+# Reader:                             acdd72a7-3385-48ef-bd42-f606fba81ae7
+# Monitoring Reader:                  43d0d8ad-25c7-4714-9337-8ba259a9fe05
+# User Access Administrator:          18d7d88d-d35e-4fb5-a5c3-7773c20a72d9
+# AKS Cluster Admin:                  0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8
+# AKS RBAC Cluster Admin:             b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b
 ROLE_ID="b24988ac-6180-42a0-ab88-20f7382dd24c"  # Contributor
 USER_ACCESS_ADMIN_ROLE_ID="18d7d88d-d35e-4fb5-a5c3-7773c20a72d9"
 
 # Roles the SP is allowed to assign via User Access Administrator (for Lighthouse delegation)
-DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05"]'
+DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05", "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8", "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"]'
 
 # Validate required configuration
 if [[ -z "$PRINCIPAL_ID" ]]; then
