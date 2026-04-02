@@ -23,18 +23,20 @@ OFFER_DESCRIPTION="Grants Contributor and User Access Administrator (scoped) acc
 LOCATION="westus2"
 
 # Role Definition IDs
-# Owner:                              8e3af657-a8ff-443c-a75c-2fe8c4bcb635
-# Contributor:                        b24988ac-6180-42a0-ab88-20f7382dd24c
-# Reader:                             acdd72a7-3385-48ef-bd42-f606fba81ae7
-# Monitoring Reader:                  43d0d8ad-25c7-4714-9337-8ba259a9fe05
-# User Access Administrator:          18d7d88d-d35e-4fb5-a5c3-7773c20a72d9
-# AKS Cluster Admin:                  0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8
-# AKS RBAC Cluster Admin:             b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b
+# Owner:                                     8e3af657-a8ff-443c-a75c-2fe8c4bcb635
+# Contributor:                               b24988ac-6180-42a0-ab88-20f7382dd24c
+# Reader:                                    acdd72a7-3385-48ef-bd42-f606fba81ae7
+# Monitoring Reader:                         43d0d8ad-25c7-4714-9337-8ba259a9fe05
+# User Access Administrator:                 18d7d88d-d35e-4fb5-a5c3-7773c20a72d9
+# AKS Cluster Admin:                         0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8
+# AKS RBAC Cluster Admin:                    b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b
+# DNS Zone Contributor:                      befefa01-2a29-4197-83a8-272ff33ce314
+# AppGw for Containers Configuration Manager fbc52c3f-28ad-4303-a892-8a056630b8f1
 ROLE_ID="b24988ac-6180-42a0-ab88-20f7382dd24c"  # Contributor
 USER_ACCESS_ADMIN_ROLE_ID="18d7d88d-d35e-4fb5-a5c3-7773c20a72d9"
 
 # Roles the SP is allowed to assign via User Access Administrator (for Lighthouse delegation)
-DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05", "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8", "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"]'
+DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05", "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8", "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b", "befefa01-2a29-4197-83a8-272ff33ce314", "c52c3f-28ad-4303-a892-8a056630b8f1]'
 
 # Validate required configuration
 if [[ -z "$PRINCIPAL_ID" ]]; then
