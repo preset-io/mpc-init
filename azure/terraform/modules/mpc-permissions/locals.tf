@@ -10,5 +10,6 @@ locals {
     AKS_RBAC_Cluster_Admin                     = "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"
     DNS_Zone_Contributor                       = "befefa01-2a29-4197-83a8-272ff33ce314"
     AppGw_for_Containers_Configuration_Manager = "fbc52c3f-28ad-4303-a892-8a056630b8f1"
+    Storage_Blob_Data_Contributor              = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
   }
 }

@@ -29,6 +29,7 @@ resource "azurerm_lighthouse_definition" "this" {
       local.role_definition_ids["AKS_RBAC_Cluster_Admin"],
       local.role_definition_ids["DNS_Zone_Contributor"],
       local.role_definition_ids["AppGw_for_Containers_Configuration_Manager"],
+      local.role_definition_ids["Storage_Blob_Data_Contributor"],
     ]
   }
 }
