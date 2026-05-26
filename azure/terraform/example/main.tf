@@ -47,15 +47,29 @@ variable "role" {
   default     = "Contributor"
 }
 
+variable "aks_group_principal_id" {
+  description = "Object ID of the Entra ID group for AKS access (synced from Okta). Leave empty to skip."
+  type        = string
+  default     = ""
+}
+
+variable "aks_group_principal_name" {
+  description = "Display name for the AKS access group"
+  type        = string
+  default     = "INFRA-NON-PROD"
+}
+
 module "preset_mpc_permissions" {
   # source = "github.com/preset-io/mpc-init//azure/terraform/modules/mpc-permissions?ref=master"
   source = "../modules/mpc-permissions"
 
-  managing_tenant_id = var.managing_tenant_id
-  principal_id       = var.principal_id
-  principal_name     = var.principal_name
-  offer_name         = var.offer_name
-  role               = var.role
+  managing_tenant_id     = var.managing_tenant_id
+  principal_id           = var.principal_id
+  principal_name         = var.principal_name
+  offer_name             = var.offer_name
+  role                   = var.role
+  aks_group_principal_id   = var.aks_group_principal_id
+  aks_group_principal_name = var.aks_group_principal_name
 }
 
 output "lighthouse_definition_id" {

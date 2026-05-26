@@ -21,3 +21,13 @@ principal_id = "5477b89b-9b58-45e6-91df-6beaadd37c2c"
 # Optional: Name of the Lighthouse offer
 # Default: "Preset MPC Management Access"
 # offer_name = "Preset MPC Management Access"
+
+# Optional: Entra ID group for AKS access
+# Get the Object ID from Entra ID → Groups
+# Non-prod (INFRA-NON-PROD): 6d3f3d77-55f0-4c71-a34d-9fa06470a8a3
+# aks_group_principal_id = "6d3f3d77-55f0-4c71-a34d-9fa06470a8a3"
+
+# Optional: Display name for the AKS access group (matches Okta group name)
+# Default: "INFRA-NON-PROD"
+# For prod, use "INFRA-PROD" or the appropriate Okta group name
+# aks_group_principal_name = "INFRA-NON-PROD"

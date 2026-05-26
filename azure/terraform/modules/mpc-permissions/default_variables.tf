@@ -26,3 +26,15 @@ variable "role" {
     error_message = "Role must be Owner, Contributor, or Reader."
   }
 }
+
+variable "aks_group_principal_id" {
+  description = "Object ID of the Entra ID group for AKS access (synced from Okta). Leave empty to skip."
+  type        = string
+  default     = ""
+}
+
+variable "aks_group_principal_name" {
+  description = "Display name for the AKS access group"
+  type        = string
+  default     = "INFRA-NON-PROD"
+}

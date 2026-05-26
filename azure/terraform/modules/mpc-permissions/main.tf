@@ -32,6 +32,26 @@ resource "azurerm_lighthouse_definition" "this" {
       local.role_definition_ids["Storage_Blob_Data_Contributor"],
     ]
   }
+
+  # Optional: AKS access for Entra ID group (synced from Okta)
+  dynamic "authorization" {
+    for_each = var.aks_group_principal_id != "" ? [1] : []
+    content {
+      principal_id           = var.aks_group_principal_id
+      role_definition_id     = local.role_definition_ids["Reader"]
+      principal_display_name = var.aks_group_principal_name
+    }
+  }
+
+  dynamic "authorization" {
+    for_each = var.aks_group_principal_id != "" ? [1] : []
+    content {
+      principal_id           = var.aks_group_principal_id
+      role_definition_id     = local.role_definition_ids["AKS_Cluster_Admin"]
+      principal_display_name = var.aks_group_principal_name
+    }
+  }
+
 }
 
 # Lighthouse Assignment
