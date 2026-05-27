@@ -22,6 +22,11 @@ OFFER_NAME="Preset MPC Management Access"
 OFFER_DESCRIPTION="Grants Contributor and User Access Administrator (scoped) access to Preset MPC tenant"
 LOCATION="westus2"
 
+# Optional: Entra ID group for AKS access (synced from Okta via SCIM)
+# Set AKS_GROUP_PRINCIPAL_ID to the Object ID of the group in Entra ID to enable
+AKS_GROUP_PRINCIPAL_ID=""  # Leave empty to skip group authorizations
+AKS_GROUP_PRINCIPAL_NAME="INFRA-NON-PROD"  # Change to match the Okta group name for the target environment
+
 # Role Definition IDs
 # Owner:                                     8e3af657-a8ff-443c-a75c-2fe8c4bcb635
 # Contributor:                               b24988ac-6180-42a0-ab88-20f7382dd24c
@@ -35,6 +40,9 @@ LOCATION="westus2"
 # Storage Blob Data Contributor:             ba92f5b4-2d11-453d-a403-e96b0029c9fe
 ROLE_ID="b24988ac-6180-42a0-ab88-20f7382dd24c"  # Contributor
 USER_ACCESS_ADMIN_ROLE_ID="18d7d88d-d35e-4fb5-a5c3-7773c20a72d9"
+READER_ROLE_ID="acdd72a7-3385-48ef-bd42-f606fba81ae7"
+AKS_CLUSTER_ADMIN_ROLE_ID="0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8"
+AKS_RBAC_CLUSTER_ADMIN_ROLE_ID="b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"
 
 # Roles the SP is allowed to assign via User Access Administrator (for Lighthouse delegation)
 DELEGATED_ROLE_IDS='["b24988ac-6180-42a0-ab88-20f7382dd24c", "acdd72a7-3385-48ef-bd42-f606fba81ae7", "43d0d8ad-25c7-4714-9337-8ba259a9fe05", "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8", "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b", "befefa01-2a29-4197-83a8-272ff33ce314", "fbc52c3f-28ad-4303-a892-8a056630b8f1", "ba92f5b4-2d11-453d-a403-e96b0029c9fe"]'
@@ -68,6 +76,26 @@ fi
 UUID=$(echo "$HASH" | sed 's/^\(........\)\(....\)\(....\)\(....\)\(............\).*/\1-\2-\3-\4-\5/')
 echo "Deterministic UUID: $UUID (based on subscription + tenant + offer name)"
 
+# Build optional group authorizations
+GROUP_AUTHORIZATIONS=""
+if [[ -n "$AKS_GROUP_PRINCIPAL_ID" ]]; then
+  echo "Including AKS group authorizations for: $AKS_GROUP_PRINCIPAL_NAME ($AKS_GROUP_PRINCIPAL_ID)"
+  GROUP_AUTHORIZATIONS=$(cat <<GROUPEOF
+,
+          {
+            "principalId": "$AKS_GROUP_PRINCIPAL_ID",
+            "roleDefinitionId": "$READER_ROLE_ID",
+            "principalIdDisplayName": "$AKS_GROUP_PRINCIPAL_NAME"
+          },
+          {
+            "principalId": "$AKS_GROUP_PRINCIPAL_ID",
+            "roleDefinitionId": "$AKS_CLUSTER_ADMIN_ROLE_ID",
+            "principalIdDisplayName": "$AKS_GROUP_PRINCIPAL_NAME"
+          }
+GROUPEOF
+  )
+fi
+
 # Create template
 cat > lighthouse.json << EOF
 {
@@ -94,7 +122,7 @@ cat > lighthouse.json << EOF
             "roleDefinitionId": "$USER_ACCESS_ADMIN_ROLE_ID",
             "principalIdDisplayName": "$PRINCIPAL_NAME",
             "delegatedRoleDefinitionIds": $DELEGATED_ROLE_IDS
-          }
+          }${GROUP_AUTHORIZATIONS}
         ]
       }
     },
